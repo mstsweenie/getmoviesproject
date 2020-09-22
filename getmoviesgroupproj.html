@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>API fetch</title> <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <style>
+            h1 {
+                text-align: center;
+                margin: 4px
+            }
+            div {
+                text-align: center;
+                border: 10px;
+                margin: 10px;
+            }
+            body {
+                background-color: gray;
+            }
+        </style>
+    </head>
+    <body>
+        <h1> Search Millions of Movies By Title</h1>
+        <div class="container">
+            <input id="title" placeholder="Search by title" type="search">
+            <button id="button">search</button>
+        </div>
+         <div id= "movieinfoContainer"></div>
+        <div>
+            <p id="pageResults" style="background-color: blue; color: white;"></p>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+        <script>
+            document.getElementById('button').addEventListener("click", function () {
+                var title = document.getElementById("title").value;
+                if (title.length >= 3) {  
+                    document.getElementById("movieinfoContainer").innerHTML=""; 
+                    document.getElementById("pageResults").innerText="";        
+                    fetch(`https://www.omdbapi.com/?apikey=909467c5&type=movie&s=${title}&page=1`)
+                    .then (response => response.json())
+                    .then(response => {
+                        if(response.Response == "False") {
+                            alert(response.Error);
+                        } else {
+                            for(let i= 0; i< response.Search.length; i++) {
+                                console.log(i); 
+                                console.log(response.Search[i].Title); 
+                                var poster = response.Search[i].Poster; 
+                                var movieTitle = response.Search[i].Title; 
+                                var year = response.Search[i].Year; 
+                                var image = document.createElement("img"); 
+                                image.src = `${poster}`;
+                                image.alt = `${title} movie poster`;
+
+                                var imageDiv = document.createElement("div");
+                                imageDiv.append(image);
+
+                                var titleDiv = document.createElement("div");
+                                titleDiv.innerText = `Title: ${movieTitle}`
+
+                                var yearDiv = document.createElement("Div");
+                                yearDiv.innerText = `Year: ${year}`
+
+                                var movieDiv= document.createElement("div");
+
+                                movieDiv.append(imageDiv);
+                                movieDiv.append(titleDiv);
+                                movieDiv.append(yearDiv);
+
+                                document.getElementById("movieinfoContainer").append(movieDiv);
+
+                                 //movieDiv.classList.add("border");
+                               //  movieDiv.classList.add("border-radius");
+                                // movieDiv.classList.add("p-8");
+                                // movieDiv.classList.add("col-md");
+                                // movieDiv.classList.add("rounded");
+                                // movieDiv.classList.add("m-8");
+                            
+                            }   // code that adds page results
+                            document.getElementById("pageResults").innerText= `${response.totalResults} total results`;
+                            console.log(response);
+                        }
+                    });
+                } else {
+                    alert("Whoa there cowboy!")
+                }
+            })       
+        </script>
+    </body>
+</html>
